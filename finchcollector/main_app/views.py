@@ -2,11 +2,11 @@ from django.shortcuts import render, redirect
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView
 from django.views.generic.detail import DetailView
-from .models import Cat, Toy
+from .models import Finch, Toy
 from .forms import FeedingForm
 
-# temporary cats for building templates
-# cats = [
+# temporary finches for building templates
+# finches = [
 #     {'name': 'Lolo', 'breed': 'tabby', 'description': 'furry little demon', 'age': 3},
 #     {'name': 'Sachi', 'breed': 'calico', 'description': 'gentle and loving', 'age': 2},
 #     {'name': 'Tubs', 'breed': 'ragdoll', 'description': 'chunky lil guy', 'age': 0},
@@ -22,67 +22,67 @@ def home(request):
 def about(request):
     return render(request, 'about.html')
 
-# index route for cats
-def cats_index(request):
+# index route for finches
+def finches_index(request):
     # just like we passed data to our templates in express
     # we pass data to our templates through our view functions
     # we can gather relations from SQL using our model methods
-    cats = Cat.objects.all()
-    return render(request, 'cats/index.html', { 'cats': cats })
+    finches = Finch.objects.all()
+    return render(request, 'finches/index.html', { 'finches': finches })
 
-# detail route for cats
-# cat_id is defined, expecting an integer, in our url
-def cats_detail(request, cat_id):
-    cat = Cat.objects.get(id=cat_id)
+# detail route for finches
+# finch_id is defined, expecting an integer, in our url
+def finches_detail(request, finch_id):
+    finch = Finch.objects.get(id=finch_id)
 
-    # first we'll get a list of ids of toys the cat owns
-    id_list = cat.toys.all().values_list('id')
-    # then we'll make a list of the toys the cat does not have
-    toys_cat_doesnt_have = Toy.objects.exclude(id__in=id_list)
+    # first we'll get a list of ids of toys the finch owns
+    id_list = finch.toys.all().values_list('id')
+    # then we'll make a list of the toys the finch does not have
+    toys_finch_doesnt_have = Toy.objects.exclude(id__in=id_list)
     # instantiate FeedingForm to be rendered in the template
     feeding_form = FeedingForm()
-    return render(request, 'cats/detail.html', { 'cat': cat, 'feeding_form': feeding_form, 'toys': toys_cat_doesnt_have })
+    return render(request, 'finches/detail.html', { 'finch': finch, 'feeding_form': feeding_form, 'toys': toys_finch_doesnt_have })
 
-class CatCreate(CreateView):
-    model = Cat
+class FinchCreate(CreateView):
+    model = Finch
     # the fields attribute is required for a createview. These inform the form
     fields = '__all__'
     # we could also have written our fields like this:
     # fields = ['name', 'breed', 'description', 'age']
     # we need to add redirects when we make a success
-    # success_url = '/cats/{cat_id}'
+    # success_url = '/finches/{finch_id}'
     # or, we could redirect to the index page if we want
-    # success_url = '/cats'
+    # success_url = '/finches'
     # what django recommends, is adding a get_absolute_url method to the model
 
-class CatUpdate(UpdateView):
-    model = Cat
-    # let's use custom fields to disallow renaming a cat
+class FinchUpdate(UpdateView):
+    model = Finch
+    # let's use custom fields to disallow renaming a finch
     fields = ['breed', 'description', 'age']
 
-class CatDelete(DeleteView):
-    model = Cat
-    success_url = '/cats/'
+class FinchDelete(DeleteView):
+    model = Finch
+    success_url = '/finches/'
 
-def add_feeding(request, cat_id):
+def add_feeding(request, finch_id):
     # create a ModelForm instance from the data in request.POST
     form = FeedingForm(request.POST)
 
     # we need to validate the form, that means "does it match our data?"
     if form.is_valid():
-        # we dont want to save the form to the db until is has the cat id
+        # we dont want to save the form to the db until is has the finch id
         new_feeding = form.save(commit=False)
-        new_feeding.cat_id = cat_id
+        new_feeding.finch_id = finch_id
         new_feeding.save()
-    return redirect('detail', cat_id=cat_id)
+    return redirect('detail', finch_id=finch_id)
 
-def assoc_toy(request, cat_id, toy_id):
-    Cat.objects.get(id=cat_id).toys.add(toy_id)
-    return redirect('detail', cat_id=cat_id)
+def assoc_toy(request, finch_id, toy_id):
+    Finch.objects.get(id=finch_id).toys.add(toy_id)
+    return redirect('detail', finch_id=finch_id)
 
-def unassoc_toy(request, cat_id, toy_id):
-    Cat.objects.get(id=cat_id).toys.remove(toy_id)
-    return redirect('detail', cat_id=cat_id)
+def unassoc_toy(request, finch_id, toy_id):
+    Finch.objects.get(id=finch_id).toys.remove(toy_id)
+    return redirect('detail', finch_id=finch_id)
 
 # ToyList
 class ToyList(ListView):

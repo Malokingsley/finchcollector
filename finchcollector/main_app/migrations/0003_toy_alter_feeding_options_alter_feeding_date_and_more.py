@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
             field=models.DateField(verbose_name='feeding date'),
         ),
         migrations.AddField(
-            model_name='cat',
+            model_name='finch',
             name='toys',
             field=models.ManyToManyField(to='main_app.toy'),
         ),

@@ -19,7 +19,7 @@ class Toy(models.Model):
     def get_absolute_url(self):
         return reverse('toys_detail', kwargs={'pk': self.id})
 
-class Cat(models.Model):
+class Finch(models.Model):
     name = models.CharField(max_length=100)
     breed = models.CharField(max_length=100)
     description = models.TextField(max_length=250)
@@ -29,15 +29,15 @@ class Cat(models.Model):
     def fed_for_today(self):
         return self.feeding_set.filter(date=date.today()).count() >= len(MEALS)
 
-    # dunder str method return cat name
+    # dunder str method return name
     def __str__(self):
         return self.name
     
     # this is used to direct to the detail view for a resource
     def get_absolute_url(self):
-        return reverse('detail', kwargs={'cat_id': self.id })
+        return reverse('detail', kwargs={'finch_id': self.id })
 
-# Add new Feeding model below Cat model
+# Add new Feeding model below model
 class Feeding(models.Model):
     date = models.DateField('feeding date')
     meal = models.CharField(
@@ -47,8 +47,8 @@ class Feeding(models.Model):
         # set a default value for the meal to be 'B'
         default = MEALS[0][0]
     )
-    # add cat foreign key reference
-    cat = models.ForeignKey(Cat, on_delete=models.CASCADE)
+    # add foreign key reference
+    = models.ForeignKey(Finch, on_delete=models.CASCADE)
 
     def __str__(self):
         # this method is coming from django
